@@ -1,0 +1,11 @@
+Flask==1.1.1
+setuptools
+wheel
+pytest
+pytest-cov
+flake8
+python-schema-registry-client
+six
+requests
+avro
+delta-spark
