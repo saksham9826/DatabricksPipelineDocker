@@ -5,9 +5,9 @@ import sys
 import json
 
 # setup arguments
-os.environ['kafka1'] = '34.220.52.64'
-os.environ['kafka2'] = '52.35.125.165'
-os.environ['schema-registry'] = '52.35.125.165'
+os.environ['kafka1'] = ''
+os.environ['kafka2'] = ''
+os.environ['schema-registry'] = ''
 
 
 os.environ['PYSPARK_PYTHON'] = "python3"
@@ -58,7 +58,7 @@ spark.sparkContext.addPyFile(dep_file_path)
 kafka = spark \
   .read \
   .format("kafka") \
-.option("kafka.bootstrap.servers", "34.220.52.64:9092,52.35.125.165:9092")\
+.option("kafka.bootstrap.servers", "")\
 .option("subscribePattern", "qatest12nonfes.public.field_data_+(1[0-2]|[1-9])_202[0-9]")\
 .option("startingOffsets", "earliest")\
 .option("maxOffsetsPerTrigger", 1)\
@@ -111,7 +111,7 @@ df = df.withColumn("schemaId", byteArrayToLong(fn.substring("valuenew", 2, 4))) 
 df.show(10)
 
 
-dfSchema = getJsonSchemaLatest("http://52.35.125.165:8081", "qatest12nonfes.public.field_data_3_2022-value")
+dfSchema = getJsonSchemaLatest("", "-value")
 df = df.withColumn("payload", fn.expr("substring(valuenew, 6, length(valuenew)-5)"))
 df = df.withColumn('value', from_avro("payload", dfSchema))
 df = df.drop("payload")
@@ -229,7 +229,7 @@ def upsertToDelta2(kafka, batchId):
         
         microBatchOutputDF = dfBySchemaId
 
-        df5 = spark.sparkContext._jvm.com.example.Hello.add(spark._jsparkSession, "34.220.52.64:9092,52.35.125.165:9092", "datalake-qa-91")
+        df5 = spark.sparkContext._jvm.com.example.Hello.add(spark._jsparkSession, "", "datalake-qa-91")
         microBatchOutputDF = microBatchOutputDF.drop("valuenew")
         
         microBatchOutputDF = microBatchOutputDF.withColumn('valueConsumerKafka', microBatchOutputDF['value'])
@@ -354,7 +354,7 @@ def upsertToDelta2(kafka, batchId):
         
 kafka = spark.readStream \
             .format("kafka") \
-            .option("kafka.bootstrap.servers", "34.220.52.64:9092,52.35.125.165:9092") \
+            .option("kafka.bootstrap.servers", "") \
             .option("subscribe", "qatest12nonfes.public.user_summary_old") \
             .option("startingOffsets", "earliest") \
             .option("maxOffsetsPerTrigger", 1000000) \
